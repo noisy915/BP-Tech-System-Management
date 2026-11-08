@@ -13,6 +13,13 @@ const auth = {
     },
 
     /**
+     * Check if running in offline demo mode
+     */
+    isOfflineMode() {
+        return localStorage.getItem("bp_tech_offline_mode") === "true";
+    },
+
+    /**
      * Get active admin username
      */
     getUsername() {
@@ -25,6 +32,7 @@ const auth = {
     logout() {
         localStorage.removeItem(CONFIG.AUTH_TOKEN_KEY);
         localStorage.removeItem(CONFIG.AUTH_USER_KEY);
+        localStorage.removeItem("bp_tech_offline_mode");
         window.location.href = "admin-login.html";
     },
 
@@ -63,13 +71,46 @@ document.addEventListener("DOMContentLoaded", () => {
             loginAlert.style.display = "none";
 
             try {
+                // 1. Attempt authentication with FastAPI backend
                 const data = await api.login(username, password);
                 localStorage.setItem(CONFIG.AUTH_TOKEN_KEY, data.access_token);
                 localStorage.setItem(CONFIG.AUTH_USER_KEY, data.username);
+                localStorage.removeItem("bp_tech_offline_mode");
                 window.location.href = "admin-dashboard.html";
             } catch (err) {
-                loginAlert.textContent = err.message || "Invalid administrator credentials. Please try again.";
-                loginAlert.style.display = "block";
+                console.warn("Backend API login attempt failed:", err);
+
+                // Detect network / fetch failure (backend server not started or connection refused)
+                const isNetworkError = !err.message || 
+                    err.message.includes("Failed to fetch") || 
+                    err.message.includes("NetworkError") || 
+                    err.message.includes("Load failed") ||
+                    err.name === "TypeError";
+
+                if (isNetworkError) {
+                    // Check default admin demo credentials
+                    if (username === "admin" && password === "admin123") {
+                        localStorage.setItem(CONFIG.AUTH_TOKEN_KEY, "bp_tech_demo_token");
+                        localStorage.setItem(CONFIG.AUTH_USER_KEY, "admin");
+                        localStorage.setItem("bp_tech_offline_mode", "true");
+                        window.location.href = "admin-dashboard.html";
+                        return;
+                    }
+
+                    loginAlert.innerHTML = `
+                        <strong>⚠️ Backend Server Offline:</strong><br>
+                        Cannot connect to <code>${CONFIG.API_BASE_URL}</code>.<br><br>
+                        <strong>To connect live database:</strong><br>
+                        Run <code>uvicorn main:app --reload</code> in the <code>backend/</code> folder.<br><br>
+                        <strong>To preview offline:</strong><br>
+                        Sign in with Username: <strong>admin</strong> | Password: <strong>admin123</strong>
+                    `;
+                    loginAlert.style.display = "block";
+                } else {
+                    // Backend responded but credentials rejected (e.g. 401 Unauthorized)
+                    loginAlert.textContent = err.message || "Invalid administrator credentials. Please check your username and password.";
+                    loginAlert.style.display = "block";
+                }
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.textContent = "Sign In to Dashboard";
@@ -90,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Display admin greeting if on dashboard
     const adminGreeting = document.getElementById("adminUserGreeting");
     if (adminGreeting) {
-        adminGreeting.textContent = `Logged in as: ${auth.getUsername()}`;
+        const modeBadge = auth.isOfflineMode() ? " (Demo Mode)" : "";
+        adminGreeting.textContent = `Logged in as: ${auth.getUsername()}${modeBadge}`;
     }
 });
