@@ -54,6 +54,29 @@
             <button id="searchBtn" class="btn-search">Search</button>
         </div>
 
+        <!-- Component Type Dropdown -->
+        <div class="component-dropdown-wrap">
+            <select id="componentDropdown" class="form-select custom-dropdown">
+                <option value="">📂 All Components (GPU, CPU, etc.)</option>
+                <option value="CPU">CPU (Processor)</option>
+                <option value="GPU">GPU (Graphics Card)</option>
+                <option value="MOBO">MOBO (Motherboard)</option>
+                <option value="RAM">RAM (Memory)</option>
+                <option value="SSD">SSD (Solid State Drive)</option>
+                <option value="HDD">HDD (Hard Disk Drive)</option>
+                <option value="PSU">PSU (Power Supply)</option>
+                <option value="PC CASE">PC Case</option>
+                <option value="CPU COOLER">CPU Cooler</option>
+                <option value="CASING FAN">Casing Fan</option>
+                <option value="MONITOR">Monitor</option>
+                <option value="KEYBOARD">Keyboard</option>
+                <option value="MOUSE">Mouse</option>
+                <option value="HEADSET">Headset</option>
+                <option value="SPEAKER">Speaker</option>
+                <option value="CONTROLLER">Controller</option>
+            </select>
+        </div>
+
         <!-- Category Filter Pills -->
         <div class="filter-pills" id="categoryPills">
             <button class="pill active" data-category-id="">All Categories</button>
@@ -62,7 +85,6 @@
 
         <!-- Condition Filter (All / New / Used) -->
         <div class="condition-toggles" id="conditionToggles">
-            <button class="condition-btn active" data-condition="">Filter</button>
             <button class="condition-btn active" data-condition="">All Conditions</button>
             <button class="condition-btn" data-condition="New">New Only</button>
             <button class="condition-btn" data-condition="Used">Used / Refurbished</button>

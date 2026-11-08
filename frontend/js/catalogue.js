@@ -67,6 +67,7 @@ const MOCK_PRODUCTS = [
 let activeCategoryId = "";
 let activeCondition = "";
 let currentSearchTerm = "";
+let activeComponentType = "";
 
 document.addEventListener("DOMContentLoaded", () => {
     initFilters();
@@ -90,6 +91,15 @@ function initFilters() {
                 currentSearchTerm = searchInput.value.trim();
                 loadProducts();
             }
+        });
+    }
+
+    // Component dropdown filter
+    const componentDropdown = document.getElementById("componentDropdown");
+    if (componentDropdown) {
+        componentDropdown.addEventListener("change", (e) => {
+            activeComponentType = e.target.value;
+            loadProducts();
         });
     }
 
@@ -191,6 +201,54 @@ async function loadProducts() {
         });
     }
 
+    // Filter by Component Type Dropdown
+    if (activeComponentType) {
+        const comp = activeComponentType.toUpperCase();
+        products = products.filter((p) => {
+            const sku = (p.sku || "").toUpperCase();
+            const name = (p.product_name || "").toUpperCase();
+            const desc = (p.description || "").toUpperCase();
+            const cat = (p.category && p.category.category_name ? p.category.category_name : "").toUpperCase();
+
+            switch (comp) {
+                case "CPU":
+                    return sku.startsWith("CPU") || cat.includes("PROCESSOR") || name.includes("RYZEN") || name.includes("INTEL") || name.includes("CPU") || desc.includes("PROCESSOR");
+                case "GPU":
+                    return sku.startsWith("GPU") || cat.includes("GRAPHIC") || name.includes("GEFORCE") || name.includes("RTX") || name.includes("GTX") || name.includes("RADEON") || name.includes("GPU");
+                case "MOBO":
+                    return sku.startsWith("MB") || sku.startsWith("MOBO") || cat.includes("MOTHERBOARD") || name.includes("MOTHERBOARD") || name.includes("B550") || name.includes("B650") || name.includes("Z790");
+                case "RAM":
+                    return sku.startsWith("RAM") || cat.includes("RAM") || name.includes("RAM") || name.includes("DDR4") || name.includes("DDR5") || desc.includes("MEMORY");
+                case "SSD":
+                    return sku.startsWith("SSD") || (cat.includes("STORAGE") && (name.includes("SSD") || desc.includes("NVME") || desc.includes("SSD"))) || name.includes("SSD") || desc.includes("NVME");
+                case "HDD":
+                    return sku.startsWith("HDD") || name.includes("HDD") || name.includes("HARD DISK") || desc.includes("HARD DISK");
+                case "PSU":
+                    return sku.startsWith("PSU") || cat.includes("POWER") || name.includes("PSU") || name.includes("POWER SUPPLY") || desc.includes("POWER SUPPLY");
+                case "PC CASE":
+                    return sku.includes("CASE") || name.includes("CASE") || desc.includes("CHASSIS") || desc.includes("TOWER");
+                case "CPU COOLER":
+                    return sku.includes("COOL") || name.includes("COOLER") || desc.includes("COOLER") || desc.includes("AIO");
+                case "CASING FAN":
+                    return sku.includes("FAN") || name.includes("FAN");
+                case "MONITOR":
+                    return sku.includes("MON") || name.includes("MONITOR");
+                case "KEYBOARD":
+                    return sku.includes("KB") || name.includes("KEYBOARD");
+                case "MOUSE":
+                    return sku.includes("MOUSE") || name.includes("MOUSE");
+                case "HEADSET":
+                    return sku.includes("HEAD") || name.includes("HEADSET") || name.includes("HEADPHONE");
+                case "SPEAKER":
+                    return sku.includes("SPK") || name.includes("SPEAKER");
+                case "CONTROLLER":
+                    return sku.includes("CTRL") || name.includes("CONTROLLER") || name.includes("GAMEPAD");
+                default:
+                    return sku.includes(comp) || name.includes(comp) || cat.includes(comp);
+            }
+        });
+    }
+
     if (countDisplay) {
         countDisplay.textContent = `${products.length} product(s) available`;
     }
@@ -270,8 +328,11 @@ function resetFilters() {
     activeCategoryId = "";
     activeCondition = "";
     currentSearchTerm = "";
+    activeComponentType = "";
     const searchInput = document.getElementById("searchInput");
     if (searchInput) searchInput.value = "";
+    const componentDropdown = document.getElementById("componentDropdown");
+    if (componentDropdown) componentDropdown.value = "";
     document.querySelectorAll("#conditionToggles .condition-btn").forEach((b, i) => {
         b.classList.toggle("active", i === 0);
     });
