@@ -1,0 +1,110 @@
+/* ====================================================================
+   BP TECH INVENTORY MANAGEMENT SYSTEM
+   [MEMBER 2: Frontend Developer]
+   Responsive Media Queries & Mobile Adaptation
+   ==================================================================== */
+
+@media (max-width: 1024px) {
+    .hero-title {
+        font-size: 2.25rem;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .custom-pc-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        height: auto;
+        padding: 16px 0;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .hero-title {
+        font-size: 1.85rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar-wrap {
+        flex-direction: column;
+    }
+
+    .btn-search {
+        padding: 12px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .data-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .admin-navbar {
+        padding: 16px;
+        flex-direction: column;
+        height: auto;
+        gap: 12px;
+    }
+
+    .tabs-header {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .whatsapp-fab {
+        bottom: 20px;
+        right: 20px;
+        width: 52px;
+        height: 52px;
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.6rem;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .login-card {
+        padding: 24px 18px;
+    }
+}

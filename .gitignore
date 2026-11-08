@@ -1,12 +1,17 @@
-
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
+
+# Databases
+*.db
+*.sqlite3
 
 # Virtual environments
 .venv/
 venv/
+ENV/
 
 # Environment variables and secrets
 .env
@@ -17,5 +22,6 @@ venv/
 
 # Editor and operating system files
 .vscode/
+.idea/
 .DS_Store
 Thumbs.db

@@ -291,4 +291,105 @@ Deliverables:
 Tasks:
 - Implement JavaScript Fetch API requests.
 - Retrieve product information from FastAPI endpoints.
-- Dynamically
+- Dynamically render products in the customer catalogue.
+- Implement category filtering, search, and condition toggles.
+- Handle administrator authentication, login tokens, and session persistence.
+- Manage admin dashboard inventory operations and stock movement form submissions.
+- Generate pre-filled WhatsApp enquiry links with product details and custom PC building requests.
+
+Deliverables:
+- JavaScript API service layer (`frontend/js/api.js`).
+- Dynamic catalogue rendering and filter module (`frontend/js/catalogue.js`).
+- Administrator inventory management scripts (`frontend/js/admin.js`).
+- Authentication and session handling (`frontend/js/auth.js`).
+- WhatsApp link generator (`frontend/js/whatsapp.js`).
+
+## 10. Project Directory Structure & Team File Ownership
+
+To make collaboration smooth among the 3 team members, the repository is structured with clear file ownership:
+
+```
+database/
+├── README.md                                  # [Shared] Main project documentation
+├── TEAM_ROLES.md                              # [Shared] Detailed role breakdown & guide
+├── index.html                                 # [Member 2] Root entrypoint redirecting to frontend/
+├── .gitignore                                 # [Shared] Git ignore rules
+│
+├── backend/                                   # [MEMBER 1: Backend & Database Developer]
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py                            # FastAPI application entry point
+│   │   ├── config.py                          # Environment and database settings
+│   │   ├── database.py                        # SQLAlchemy connection & sessionmaker
+│   │   ├── auth_utils.py                      # Bcrypt password hashing & JWT tokens
+│   │   ├── seed_data.py                       # Automated database seeder script
+│   │   ├── models/                            # SQLAlchemy ORM models (5 entities + admin)
+│   │   │   ├── __init__.py
+│   │   │   ├── category.py                    # Entity 1: Category
+│   │   │   ├── supplier.py                    # Entity 2: Supplier
+│   │   │   ├── product.py                     # Entity 3: Product
+│   │   │   ├── inventory.py                   # Entity 4: Inventory (1:1 with Product)
+│   │   │   ├── stock_movement.py              # Entity 5: Stock_Movement (1:M with Product)
+│   │   │   └── admin.py                       # Administrator entity
+│   │   ├── schemas/                           # Pydantic validation schemas
+│   │   │   ├── __init__.py
+│   │   │   ├── category.py
+│   │   │   ├── supplier.py
+│   │   │   ├── product.py
+│   │   │   ├── inventory.py
+│   │   │   ├── stock_movement.py
+│   │   │   └── auth.py
+│   │   └── routers/                           # REST API endpoint routers
+│   │       ├── __init__.py
+│   │       ├── auth.py                        # /api/auth endpoints
+│   │       ├── categories.py                  # /api/categories endpoints
+│   │       ├── suppliers.py                   # /api/suppliers endpoints
+│   │       ├── products.py                    # /api/products endpoints
+│   │       ├── inventory.py                   # /api/inventory endpoints
+│   │       └── stock_movements.py             # /api/stock-movements endpoints
+│   ├── sql/                                   # PostgreSQL DDL and seeds
+│   │   ├── schema.sql                         # PostgreSQL table creation script
+│   │   └── seed.sql                           # PostgreSQL sample insert statements
+│   ├── requirements.txt                       # Python dependencies
+│   ├── .env.example                           # Environment configuration template
+│   ├── main.py                                # Convenience proxy
+│   ├── config.py                              # Convenience proxy
+│   └── database.py                            # Convenience proxy
+│
+└── frontend/                                  # [MEMBERS 2 & 3: Frontend Team]
+    ├── index.html                             # [Member 2] Customer catalogue & WhatsApp section
+    ├── product-detail.html                    # [Member 2] Product detail page
+    ├── admin-login.html                       # [Member 2] Administrator login page
+    ├── admin-dashboard.html                   # [Member 2] Admin inventory & movements dashboard
+    ├── css/                                   # [Member 2: Frontend Developer - Styles]
+    │   ├── styles.css                         # Customer catalogue styles (dark tech theme)
+    │   ├── admin.css                          # Admin dashboard styles & modals
+    │   └── responsive.css                     # Responsive mobile & tablet styles
+    └── js/                                    # [Member 3: JS & Frontend Integration Developer]
+        ├── config.js                          # API base URL & WhatsApp settings
+        ├── api.js                             # Fetch API client helper
+        ├── auth.js                            # Admin token management & route protection
+        ├── catalogue.js                       # Dynamic catalogue rendering & filtering
+        ├── admin.js                           # Admin inventory CRUD & stock movements
+        └── whatsapp.js                        # WhatsApp enquiry link generator
+```
+
+## 11. Quick Start Guide
+
+### 1. Backend Setup (Member 1)
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate       # On Windows (.venv/bin/activate on macOS/Linux)
+pip install -r requirements.txt
+python -m app.seed_data      # Seeds tables and sample BP Tech components
+uvicorn main:app --reload
+```
+- API Base URL: `http://127.0.0.1:8000`
+- Interactive Swagger UI: `http://127.0.0.1:8000/docs`
+- Default Admin Account: Username `admin`, Password `admin123`
+
+### 2. Frontend Setup (Members 2 & 3)
+- Open `frontend/index.html` in your browser or with VS Code Live Server (`http://127.0.0.1:5500`).
+- The frontend connects automatically to the FastAPI backend API at `http://127.0.0.1:8000/api`.
+- When the backend is not running, the customer catalogue displays built-in preview products so frontend work can continue uninterrupted.

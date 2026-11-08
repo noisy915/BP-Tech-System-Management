@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP Tech | Product Details</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .detail-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            margin: 40px auto;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+        }
+        @media (max-width: 768px) {
+            .detail-card { grid-template-columns: 1fr; }
+        }
+        .detail-img {
+            width: 100%;
+            height: 340px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container nav-container">
+            <a href="index.html" class="brand">
+                <div class="brand-logo">BP</div>
+                <div class="brand-text">
+                    <h1>BP TECH</h1>
+                    <span>Computer Shop & PC Builder</span>
+                </div>
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">← Back to Catalogue</a></li>
+                    <li><a href="admin-login.html" class="btn-admin">Admin Portal</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="flex: 1;">
+        <div class="detail-card" id="detailCard">
+            <div>
+                <img src="" alt="Product Image" id="detailImg" class="detail-img">
+            </div>
+            <div class="detail-info">
+                <div class="product-sku" id="detailSku">SKU: ---</div>
+                <h2 id="detailTitle" style="color: #fff; font-size: 1.8rem; margin-bottom: 12px;">Loading...</h2>
+                <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                    <span class="badge" id="detailCondition">New</span>
+                    <span class="badge badge-category" id="detailCategory">Category</span>
+                </div>
+                <div class="price-value" style="font-size: 2rem; margin-bottom: 20px;" id="detailPrice">RM 0.00</div>
+                <p id="detailDesc" style="color: var(--text-secondary); margin-bottom: 24px; line-height: 1.7;"></p>
+                <div id="detailStock" style="margin-bottom: 24px; font-weight: 600;"></div>
+                <a href="#" target="_blank" id="detailWhatsappBtn" class="btn-whatsapp-hero" style="width: 100%; justify-content: center;">
+                    <span>💬</span> Enquire on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts: [MEMBER 3: JavaScript and Frontend Integration Developer] -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/whatsapp.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            if (!productId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const product = await api.getProduct(productId);
+                document.getElementById('detailTitle').textContent = product.product_name;
+                document.getElementById('detailSku').textContent = `SKU: ${product.sku}`;
+                document.getElementById('detailDesc').textContent = product.description || 'No description provided.';
+                document.getElementById('detailPrice').textContent = `RM ${parseFloat(product.selling_price).toFixed(2)}`;
+                document.getElementById('detailImg').src = product.image_url || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=500';
+
+                const condBadge = document.getElementById('detailCondition');
+                condBadge.textContent = product.condition;
+                condBadge.className = `badge ${product.condition === 'New' ? 'badge-new' : 'badge-used'}`;
+
+                document.getElementById('detailCategory').textContent = product.category ? product.category.category_name : 'Component';
+
+                const stockContainer = document.getElementById('detailStock');
+                const qty = product.inventory ? product.inventory.quantity_available : 0;
+                if (qty <= 0) {
+                    stockContainer.innerHTML = '<span class="stock-out">● Out of Stock (WhatsApp for preorder)</span>';
+                } else if (product.inventory && product.inventory.is_low_stock) {
+                    stockContainer.innerHTML = `<span class="stock-low">● Low Stock (${qty} unit(s) remaining)</span>`;
+                } else {
+                    stockContainer.innerHTML = `<span class="stock-in">● In Stock (${qty} units available)</span>`;
+                }
+
+                // WhatsApp enquiry link
+                const waBtn = document.getElementById('detailWhatsappBtn');
+                waBtn.href = whatsapp.getProductLink(product.product_name, product.condition, product.selling_price);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('detailTitle').textContent = 'Error loading product details';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP Tech | Administrator Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Admin Topbar -->
+    <header class="admin-navbar">
+        <div class="admin-nav-title">
+            <div class="brand-logo" style="width: 32px; height: 32px; font-size: 0.95rem;">BP</div>
+            <span>BP Tech Inventory Control</span>
+            <span class="admin-nav-badge">Admin Mode</span>
+        </div>
+        <div class="admin-user-controls">
+            <a href="index.html" class="nav-link" target="_blank">View Live Store ↗</a>
+            <span style="color: var(--text-muted); font-size: 0.85rem;" id="adminUserGreeting">Logged in as: admin</span>
+            <button id="logoutBtn" class="btn-logout">Sign Out</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="admin-container">
+        <!-- Toast Notification Alert -->
+        <div id="toastAlert" class="alert-toast"></div>
+
+        <!-- Metric Stat Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-title">Total Products</span>
+                <span class="stat-number" id="statTotalProducts">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">Units in Stock</span>
+                <span class="stat-number" id="statTotalStock">0</span>
+            </div>
+            <div class="stat-card alert-card">
+                <span class="stat-title">⚠️ Low Stock Alerts</span>
+                <span class="stat-number" id="statLowStock">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">Stock Movements Logged</span>
+                <span class="stat-number" id="statMovements">0</span>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-header">
+            <button class="tab-btn active" data-tab="tab-inventory">Inventory Management</button>
+            <button class="tab-btn" data-tab="tab-movements">Stock Movement Audit Trail</button>
+            <button class="tab-btn" data-tab="tab-lowstock">Low Stock Alerts</button>
+        </div>
+
+        <!-- TAB 1: Inventory Management -->
+        <div id="tab-inventory" class="tab-pane active">
+            <div class="table-card">
+                <div class="table-toolbar">
+                    <input type="text" id="adminSearchInput" class="table-search" placeholder="Search product or SKU...">
+                    <button id="openAddProductModalBtn" class="btn-primary" style="padding: 9px 20px;">+ Add New Product</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Condition</th>
+                            <th>Price (RM)</th>
+                            <th>Stock Qty</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Loading inventory records...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 2: Stock Movement Audit Trail -->
+        <div id="tab-movements" class="tab-pane" style="display: none;">
+            <div class="table-card">
+                <div class="table-toolbar">
+                    <h4 style="color: #fff;">Historical Stock Movement Logs</h4>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Log ID</th>
+                            <th>Date & Time</th>
+                            <th>Product Name</th>
+                            <th>Type</th>
+                            <th>Quantity</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movementsTableBody">
+                        <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading transaction logs...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 3: Low Stock Alerts -->
+        <div id="tab-lowstock" class="tab-pane" style="display: none;">
+            <div class="table-card">
+                <div class="table-toolbar">
+                    <h4 style="color: var(--accent-amber);">⚠️ Critical Low-Stock Items (At or below Reorder Threshold)</h4>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Product Name</th>
+                            <th>Current Stock</th>
+                            <th>Reorder Level</th>
+                            <th>Supplier</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lowStockTableBody">
+                        <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Scanning stock levels...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL: Add / Edit Product -->
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="productModalTitle">Add New Product</h3>
+                <button type="button" class="btn-close-modal" id="closeProductModalBtn">&times;</button>
+            </div>
+            <form id="productForm">
+                <input type="hidden" id="editProductId">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Product Name *</label>
+                        <input type="text" id="prodName" class="form-control" required placeholder="e.g. AMD Ryzen 7 7800X3D">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">SKU (Unique Identifier) *</label>
+                        <input type="text" id="prodSku" class="form-control" required placeholder="e.g. CPU-AMD-7800X3D">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Category *</label>
+                        <select id="prodCategory" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Supplier</label>
+                        <select id="prodSupplier" class="form-control"></select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Condition *</label>
+                        <select id="prodCondition" class="form-control" required>
+                            <option value="New">New</option>
+                            <option value="Used">Used</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Selling Price (RM) *</label>
+                        <input type="number" step="0.01" min="0" id="prodPrice" class="form-control" required placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="form-row" id="initialStockGroup">
+                    <div class="form-group">
+                        <label class="form-label">Initial Stock Quantity</label>
+                        <input type="number" min="0" id="prodInitialStock" class="form-control" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reorder Level Threshold</label>
+                        <input type="number" min="0" id="prodReorderLevel" class="form-control" value="5">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="url" id="prodImageUrl" class="form-control" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description & Technical Specifications</label>
+                    <textarea id="prodDesc" rows="3" class="form-control" placeholder="Cores, clock speed, socket, warranty terms..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn-logout" id="cancelProductBtn" style="color: var(--text-secondary); border-color: var(--border-color); background: transparent;">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Product Listing</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Record Stock Movement -->
+    <div id="stockMovementModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3>Record Stock Movement</h3>
+                <button type="button" class="btn-close-modal" id="closeMovementModalBtn">&times;</button>
+            </div>
+            <form id="movementForm">
+                <input type="hidden" id="moveProductId">
+
+                <div class="form-group">
+                    <label class="form-label">Target Product</label>
+                    <input type="text" id="moveProductName" class="form-control" readonly style="background: rgba(15,23,42,0.5); color: var(--accent-cyan); font-weight: 600;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Movement Type *</label>
+                    <select id="moveType" class="form-control" required>
+                        <option value="IN">IN (Stock Received / Supplier Delivery / Trade-In)</option>
+                        <option value="OUT">OUT (Customer Purchase / Sold / Damaged)</option>
+                        <option value="ADJUSTMENT">ADJUSTMENT (Physical Stock Count Correction)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Quantity *</label>
+                    <input type="number" min="1" id="moveQuantity" class="form-control" required placeholder="e.g. 5">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Audit Remarks / Reason</label>
+                    <input type="text" id="moveRemarks" class="form-control" placeholder="e.g. Received shipment from Ban Leong, order #104">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn-logout" id="cancelMovementBtn" style="color: var(--text-secondary); border-color: var(--border-color); background: transparent;">Cancel</button>
+                    <button type="submit" class="btn-primary">Confirm Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts: [MEMBER 3: JavaScript and Frontend Integration Developer] -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
