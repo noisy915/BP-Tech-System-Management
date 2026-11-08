@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 from app.config import CORS_ORIGINS
 from app.database import Base, engine, SessionLocal
@@ -81,7 +82,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register API Routers
+# Register API Routers (registered first so /api/* routes take precedence)
 app.include_router(auth_router)
 app.include_router(categories_router)
 app.include_router(suppliers_router)
@@ -96,7 +97,13 @@ def health_check():
     return {"status": "healthy", "service": "BP Tech Inventory API", "version": "1.0.0"}
 
 
-# Mount frontend static directory if exists (enables single-port fullstack testing)
+@app.get("/app", include_in_schema=False)
+def app_redirect():
+    """Redirect /app to root catalogue."""
+    return RedirectResponse(url="/")
+
+
+# Mount frontend static directory at root so http://127.0.0.1:8000 opens the store directly
 frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "frontend")
 if os.path.exists(frontend_path):
-    app.mount("/app", StaticFiles(directory=frontend_path, html=True), name="frontend")
+    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
