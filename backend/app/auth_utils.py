@@ -2,34 +2,51 @@
 BP Tech Inventory Management System
 [MEMBER 1: Backend and Database Developer]
 Authentication helpers: password hashing, verification, JWT token creation, and admin protection.
+Uses native bcrypt to ensure reliable performance across all platforms.
 """
 
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.database import get_db
 from app.models.admin import Admin
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Check a plain password against the stored bcrypt hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    if isinstance(plain_password, str):
+        plain_password_bytes = plain_password.encode("utf-8")[:72]
+    else:
+        plain_password_bytes = plain_password[:72]
+
+    if isinstance(hashed_password, str):
+        hashed_password_bytes = hashed_password.encode("utf-8")
+    else:
+        hashed_password_bytes = hashed_password
+
+    try:
+        return bcrypt.checkpw(plain_password_bytes, hashed_password_bytes)
+    except Exception:
+        return False
 
 
 def get_password_hash(password: str) -> str:
     """Generate a bcrypt hash from a plain password."""
-    return pwd_context.hash(password)
+    if isinstance(password, str):
+        password_bytes = password.encode("utf-8")[:72]
+    else:
+        password_bytes = password[:72]
+
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password_bytes, salt).decode("utf-8")
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
