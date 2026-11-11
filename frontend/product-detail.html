@@ -84,8 +84,86 @@
                 return;
             }
 
+            let product = null;
             try {
-                const product = await api.getProduct(productId);
+                product = await api.getProduct(productId);
+            } catch (err) {
+                console.warn("Backend API not reachable. Checking local demo store...", err);
+                const localList = (function() {
+                    try {
+                        const stored = localStorage.getItem("bp_tech_products");
+                        if (stored) return JSON.parse(stored);
+                    } catch (e) {}
+                    return null;
+                })();
+
+                const fallbackList = localList || [
+                    {
+                        product_id: 1,
+                        product_name: "AMD Ryzen 5 5600",
+                        sku: "CPU-AMD-5600-NEW",
+                        condition: "New",
+                        selling_price: "529.00",
+                        description: "6 Cores, 12 Threads, Up to 4.4 GHz Max Boost, Socket AM4, PCIe 4.0 with Wraith Stealth Cooler.",
+                        image_url: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "Processors" },
+                        inventory: { quantity_available: 14, is_low_stock: false }
+                    },
+                    {
+                        product_id: 2,
+                        product_name: "NVIDIA GeForce RTX 3060 12GB (Used)",
+                        sku: "GPU-NV-3060-USED-01",
+                        condition: "Used",
+                        selling_price: "980.00",
+                        description: "Stress-tested pass. 12GB GDDR6 VRAM, Ray Tracing, DLSS. 1-Month Store Warranty.",
+                        image_url: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "Graphics Cards" },
+                        inventory: { quantity_available: 3, is_low_stock: true }
+                    },
+                    {
+                        product_id: 3,
+                        product_name: "Kingston FURY Beast 16GB (2x8GB) DDR4 3200MHz",
+                        sku: "RAM-KST-16GB-3200-NEW",
+                        condition: "New",
+                        selling_price: "165.00",
+                        description: "High-performance low-profile heat spreader, Intel XMP 2.0 ready, AMD Ryzen compatible.",
+                        image_url: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "RAM" },
+                        inventory: { quantity_available: 25, is_low_stock: false }
+                    },
+                    {
+                        product_id: 4,
+                        product_name: "Kingston NV2 1TB PCIe 4.0 NVMe M.2 SSD",
+                        sku: "SSD-KST-NV2-1TB-NEW",
+                        condition: "New",
+                        selling_price: "289.00",
+                        description: "Gen 4x4 NVMe PCIe speed up to 3500MB/s Read, 2100MB/s Write. 3-Year warranty.",
+                        image_url: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "Storage" },
+                        inventory: { quantity_available: 18, is_low_stock: false }
+                    },
+                    {
+                        product_id: 5,
+                        product_name: "Corsair CV550 550W 80 PLUS Bronze (Used)",
+                        sku: "PSU-COR-CV550-USED",
+                        condition: "Used",
+                        selling_price: "130.00",
+                        description: "Clean tested power supply with voltage tester check. 1-Month Store Warranty.",
+                        image_url: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "Power Supplies" },
+                        inventory: { quantity_available: 1, is_low_stock: true }
+                    }
+                ];
+
+                product = fallbackList.find(p => p.product_id == productId);
+            }
+
+            if (!product) {
+                document.getElementById('detailTitle').textContent = 'Product not found';
+                return;
+            }
+
+            try {
                 document.getElementById('detailTitle').textContent = product.product_name;
                 document.getElementById('detailSku').textContent = `SKU: ${product.sku}`;
                 document.getElementById('detailDesc').textContent = product.description || 'No description provided.';
@@ -111,9 +189,8 @@
                 // WhatsApp enquiry link
                 const waBtn = document.getElementById('detailWhatsappBtn');
                 waBtn.href = whatsapp.getProductLink(product.product_name, product.condition, product.selling_price);
-            } catch (err) {
-                console.error(err);
-                document.getElementById('detailTitle').textContent = 'Error loading product details';
+            } catch (renderErr) {
+                console.error(renderErr);
             }
         });
     </script>

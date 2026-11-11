@@ -8,9 +8,144 @@ let allProducts = [];
 let allCategories = [];
 let allSuppliers = [];
 
+// ==========================================
+// Offline Demo Mock Datasets (Zero-Install Mode)
+// ==========================================
+const MOCK_CATEGORIES = [
+    { category_id: 1, category_name: "Processors" },
+    { category_id: 2, category_name: "Graphics Cards" },
+    { category_id: 3, category_name: "Motherboards" },
+    { category_id: 4, category_name: "RAM" },
+    { category_id: 5, category_name: "Storage" },
+    { category_id: 6, category_name: "Power Supplies" },
+    { category_id: 7, category_name: "PC Accessories" }
+];
+
+const MOCK_SUPPLIERS = [
+    { supplier_id: 1, supplier_name: "Ban Leong Technologies" },
+    { supplier_id: 2, supplier_name: "Ingram Micro Malaysia" },
+    { supplier_id: 3, supplier_name: "Tech Data Malaysia" },
+    { supplier_id: 4, supplier_name: "BP Tech Trade-In & Direct Sourcing" }
+];
+
+const DEFAULT_PRODUCTS = [
+    {
+        product_id: 1,
+        product_name: "AMD Ryzen 5 5600",
+        sku: "CPU-AMD-5600-NEW",
+        condition: "New",
+        selling_price: "529.00",
+        description: "6 Cores, 12 Threads, Up to 4.4 GHz Max Boost, Socket AM4, PCIe 4.0 with Wraith Stealth Cooler.",
+        image_url: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=500&auto=format&fit=crop&q=60",
+        category_id: 1,
+        category: { category_id: 1, category_name: "Processors" },
+        supplier_id: 1,
+        supplier: { supplier_id: 1, supplier_name: "Ban Leong Technologies" },
+        product_status: "Active",
+        inventory: { quantity_available: 14, reorder_level: 5, is_low_stock: false }
+    },
+    {
+        product_id: 2,
+        product_name: "NVIDIA GeForce RTX 3060 12GB (Used)",
+        sku: "GPU-NV-3060-USED-01",
+        condition: "Used",
+        selling_price: "980.00",
+        description: "Stress-tested pass. 12GB GDDR6 VRAM, Ray Tracing, DLSS. 1-Month Store Warranty.",
+        image_url: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500&auto=format&fit=crop&q=60",
+        category_id: 2,
+        category: { category_id: 2, category_name: "Graphics Cards" },
+        supplier_id: 4,
+        supplier: { supplier_id: 4, supplier_name: "BP Tech Trade-In & Direct Sourcing" },
+        product_status: "Active",
+        inventory: { quantity_available: 3, reorder_level: 4, is_low_stock: true }
+    },
+    {
+        product_id: 3,
+        product_name: "Kingston FURY Beast 16GB (2x8GB) DDR4 3200MHz",
+        sku: "RAM-KST-16GB-3200-NEW",
+        condition: "New",
+        selling_price: "165.00",
+        description: "High-performance low-profile heat spreader, Intel XMP 2.0 ready, AMD Ryzen compatible.",
+        image_url: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=500&auto=format&fit=crop&q=60",
+        category_id: 4,
+        category: { category_id: 4, category_name: "RAM" },
+        supplier_id: 2,
+        supplier: { supplier_id: 2, supplier_name: "Ingram Micro Malaysia" },
+        product_status: "Active",
+        inventory: { quantity_available: 25, reorder_level: 8, is_low_stock: false }
+    },
+    {
+        product_id: 4,
+        product_name: "Kingston NV2 1TB PCIe 4.0 NVMe M.2 SSD",
+        sku: "SSD-KST-NV2-1TB-NEW",
+        condition: "New",
+        selling_price: "289.00",
+        description: "Gen 4x4 NVMe PCIe speed up to 3500MB/s Read, 2100MB/s Write. 3-Year warranty.",
+        image_url: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500&auto=format&fit=crop&q=60",
+        category_id: 5,
+        category: { category_id: 5, category_name: "Storage" },
+        supplier_id: 1,
+        supplier: { supplier_id: 1, supplier_name: "Ban Leong Technologies" },
+        product_status: "Active",
+        inventory: { quantity_available: 18, reorder_level: 5, is_low_stock: false }
+    },
+    {
+        product_id: 5,
+        product_name: "Corsair CV550 550W 80 PLUS Bronze (Used)",
+        sku: "PSU-COR-CV550-USED",
+        condition: "Used",
+        selling_price: "130.00",
+        description: "Clean tested power supply with voltage tester check. 1-Month Store Warranty.",
+        image_url: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=500&auto=format&fit=crop&q=60",
+        category_id: 6,
+        category: { category_id: 6, category_name: "Power Supplies" },
+        supplier_id: 4,
+        supplier: { supplier_id: 4, supplier_name: "BP Tech Trade-In & Direct Sourcing" },
+        product_status: "Active",
+        inventory: { quantity_available: 1, reorder_level: 4, is_low_stock: true }
+    }
+];
+
+function getStoredProducts() {
+    const raw = localStorage.getItem("bp_tech_products");
+    if (raw) {
+        try { return JSON.parse(raw); } catch (e) {}
+    }
+    localStorage.setItem("bp_tech_products", JSON.stringify(DEFAULT_PRODUCTS));
+    return DEFAULT_PRODUCTS;
+}
+
+function saveStoredProducts(list) {
+    localStorage.setItem("bp_tech_products", JSON.stringify(list));
+}
+
+function getStoredMovements() {
+    const raw = localStorage.getItem("bp_tech_movements");
+    if (raw) {
+        try { return JSON.parse(raw); } catch (e) {}
+    }
+    const defaults = [
+        { movement_id: 1, product_id: 1, product_name: "AMD Ryzen 5 5600", movement_type: "IN", quantity: 14, movement_date: new Date().toISOString(), remarks: "Initial demo stock" },
+        { movement_id: 2, product_id: 2, product_name: "NVIDIA GeForce RTX 3060 12GB (Used)", movement_type: "IN", quantity: 3, movement_date: new Date().toISOString(), remarks: "Trade-in demo stock" },
+        { movement_id: 3, product_id: 3, product_name: "Kingston FURY Beast 16GB (2x8GB) DDR4 3200MHz", movement_type: "IN", quantity: 25, movement_date: new Date().toISOString(), remarks: "Supplier restock" }
+    ];
+    localStorage.setItem("bp_tech_movements", JSON.stringify(defaults));
+    return defaults;
+}
+
+function saveStoredMovements(list) {
+    localStorage.setItem("bp_tech_movements", JSON.stringify(list));
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Enforce authentication
     auth.requireAuth();
+
+    // Check offline mode banner
+    if (localStorage.getItem("bp_tech_offline_mode") === "true") {
+        const banner = document.getElementById("demoModeBanner");
+        if (banner) banner.style.display = "flex";
+    }
 
     // 2. Initialize UI components & tabs
     initTabs();
@@ -114,20 +249,26 @@ function initAdminSearch() {
 async function loadDropdownOptions() {
     try {
         allCategories = await api.getCategories();
-        const catSelect = document.getElementById("prodCategory");
-        if (catSelect) {
-            catSelect.innerHTML = `<option value="">Select Category</option>` +
-                allCategories.map(c => `<option value="${c.category_id}">${c.category_name}</option>`).join("");
-        }
-
-        allSuppliers = await api.getSuppliers();
-        const supSelect = document.getElementById("prodSupplier");
-        if (supSelect) {
-            supSelect.innerHTML = `<option value="">None / Direct Import</option>` +
-                allSuppliers.map(s => `<option value="${s.supplier_id}">${s.supplier_name}</option>`).join("");
-        }
     } catch (err) {
-        console.warn("Could not load dropdown options:", err);
+        console.warn("Using offline categories:", err);
+        allCategories = MOCK_CATEGORIES;
+    }
+    const catSelect = document.getElementById("prodCategory");
+    if (catSelect) {
+        catSelect.innerHTML = `<option value="">Select Category</option>` +
+            allCategories.map(c => `<option value="${c.category_id}">${c.category_name}</option>`).join("");
+    }
+
+    try {
+        allSuppliers = await api.getSuppliers();
+    } catch (err) {
+        console.warn("Using offline suppliers:", err);
+        allSuppliers = MOCK_SUPPLIERS;
+    }
+    const supSelect = document.getElementById("prodSupplier");
+    if (supSelect) {
+        supSelect.innerHTML = `<option value="">None / Direct Import</option>` +
+            allSuppliers.map(s => `<option value="${s.supplier_id}">${s.supplier_name}</option>`).join("");
     }
 }
 
@@ -137,12 +278,14 @@ async function loadDropdownOptions() {
 async function refreshAllData() {
     try {
         allProducts = await api.getProducts({ include_discontinued: true });
-        renderInventoryTable(allProducts);
-        updateStatCounters();
     } catch (err) {
-        console.error("Failed to load inventory:", err);
-        showToast("Error loading products from server.", "error");
+        console.warn("Backend unavailable, loading local offline inventory:", err);
+        allProducts = getStoredProducts();
+        const banner = document.getElementById("demoModeBanner");
+        if (banner) banner.style.display = "flex";
     }
+    renderInventoryTable(allProducts);
+    updateStatCounters();
 }
 
 /**
@@ -220,9 +363,11 @@ function updateStatCounters() {
 
     // Fetch movements count
     api.getStockMovements(null, 1).then(() => {
-        // approximate display
         document.getElementById("statMovements").textContent = "Active";
-    }).catch(() => {});
+    }).catch(() => {
+        const localLogs = getStoredMovements();
+        document.getElementById("statMovements").textContent = localLogs.length;
+    });
 }
 
 /**
@@ -258,7 +403,44 @@ async function handleProductSubmit(e) {
         document.getElementById("productModal").classList.remove("open");
         await refreshAllData();
     } catch (err) {
-        alert(err.message || "Failed to save product.");
+        // Offline demo storage fallback
+        console.warn("Saving product locally in demo mode:", err);
+        const stored = getStoredProducts();
+        const cat = allCategories.find(c => c.category_id === payload.category_id) || { category_name: "Hardware" };
+        const sup = allSuppliers.find(s => s.supplier_id === payload.supplier_id) || null;
+
+        if (editId) {
+            const index = stored.findIndex(p => p.product_id == editId);
+            if (index !== -1) {
+                stored[index] = {
+                    ...stored[index],
+                    ...payload,
+                    category: cat,
+                    supplier: sup
+                };
+            }
+            showToast("Demo Mode: Product updated successfully!");
+        } else {
+            const newId = stored.length ? Math.max(...stored.map(p => p.product_id)) + 1 : 1;
+            const initQty = parseInt(document.getElementById("prodInitialStock").value) || 0;
+            const minReorder = parseInt(document.getElementById("prodReorderLevel").value) || 5;
+            const newProduct = {
+                product_id: newId,
+                ...payload,
+                category: cat,
+                supplier: sup,
+                inventory: {
+                    quantity_available: initQty,
+                    reorder_level: minReorder,
+                    is_low_stock: initQty <= minReorder
+                }
+            };
+            stored.unshift(newProduct);
+            showToast("Demo Mode: New product added to local inventory!");
+        }
+        saveStoredProducts(stored);
+        document.getElementById("productModal").classList.remove("open");
+        await refreshAllData();
     }
 }
 
@@ -323,7 +505,40 @@ async function handleMovementSubmit(e) {
         document.getElementById("stockMovementModal").classList.remove("open");
         await refreshAllData();
     } catch (err) {
-        alert(err.message || "Failed to record stock movement.");
+        // Offline demo fallback
+        console.warn("Recording stock movement locally in demo mode:", err);
+        const stored = getStoredProducts();
+        const prod = stored.find(p => p.product_id === productId);
+        if (prod) {
+            if (!prod.inventory) prod.inventory = { quantity_available: 0, reorder_level: 5 };
+            if (movementType === "IN") {
+                prod.inventory.quantity_available += quantity;
+            } else if (movementType === "OUT") {
+                prod.inventory.quantity_available = Math.max(0, prod.inventory.quantity_available - quantity);
+            } else if (movementType === "ADJUSTMENT") {
+                prod.inventory.quantity_available = quantity;
+            }
+            prod.inventory.is_low_stock = prod.inventory.quantity_available <= prod.inventory.reorder_level;
+            saveStoredProducts(stored);
+
+            const movements = getStoredMovements();
+            movements.unshift({
+                movement_id: movements.length ? Math.max(...movements.map(m => m.movement_id)) + 1 : 1,
+                product_id: productId,
+                product_name: prod.product_name,
+                movement_type: movementType,
+                quantity: quantity,
+                movement_date: new Date().toISOString(),
+                remarks: remarks || "Demo movement"
+            });
+            saveStoredMovements(movements);
+
+            showToast(`Demo Mode: Stock transaction (${movementType}) recorded!`);
+            document.getElementById("stockMovementModal").classList.remove("open");
+            await refreshAllData();
+        } else {
+            alert("Product not found.");
+        }
     }
 }
 
@@ -337,7 +552,14 @@ window.discontinueProduct = async function(productId) {
             showToast("Product marked as Discontinued.");
             await refreshAllData();
         } catch (err) {
-            alert(err.message || "Failed to discontinue product.");
+            const stored = getStoredProducts();
+            const prod = stored.find(p => p.product_id === productId);
+            if (prod) {
+                prod.product_status = "Discontinued";
+                saveStoredProducts(stored);
+                showToast("Demo Mode: Product marked as Discontinued.");
+                await refreshAllData();
+            }
         }
     }
 };
@@ -351,36 +573,39 @@ async function loadStockMovements() {
 
     tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading audit logs...</td></tr>`;
 
+    let logs = [];
     try {
-        const logs = await api.getStockMovements(null, 50);
-        if (logs.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">No movement history recorded yet.</td></tr>`;
-            return;
+        logs = await api.getStockMovements(null, 50);
+    } catch (err) {
+        console.warn("Using offline stock movement logs:", err);
+        logs = getStoredMovements();
+    }
+
+    if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">No movement history recorded yet.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = logs.map(m => {
+        let typeBadge = `<span style="color: var(--accent-green); font-weight: bold;">[IN] Addition</span>`;
+        if (m.movement_type === "OUT") {
+            typeBadge = `<span style="color: var(--accent-red); font-weight: bold;">[OUT] Deduction</span>`;
+        } else if (m.movement_type === "ADJUSTMENT") {
+            typeBadge = `<span style="color: var(--accent-amber); font-weight: bold;">[ADJUSTMENT] Set Qty</span>`;
         }
 
-        tbody.innerHTML = logs.map(m => {
-            let typeBadge = `<span style="color: var(--accent-green); font-weight: bold;">[IN] Addition</span>`;
-            if (m.movement_type === "OUT") {
-                typeBadge = `<span style="color: var(--accent-red); font-weight: bold;">[OUT] Deduction</span>`;
-            } else if (m.movement_type === "ADJUSTMENT") {
-                typeBadge = `<span style="color: var(--accent-amber); font-weight: bold;">[ADJUSTMENT] Set Qty</span>`;
-            }
-
-            const dt = new Date(m.movement_date).toLocaleString();
-            return `
-                <tr>
-                    <td>#${m.movement_id}</td>
-                    <td>${dt}</td>
-                    <td><strong>${m.product_name || `Product ID #${m.product_id}`}</strong></td>
-                    <td>${typeBadge}</td>
-                    <td><strong>${m.quantity}</strong></td>
-                    <td style="color: var(--text-secondary);">${m.remarks || '-'}</td>
-                </tr>
-            `;
-        }).join("");
-    } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--accent-red); padding: 30px;">Failed to load movement logs.</td></tr>`;
-    }
+        const dt = new Date(m.movement_date).toLocaleString();
+        return `
+            <tr>
+                <td>#${m.movement_id}</td>
+                <td>${dt}</td>
+                <td><strong>${m.product_name || `Product ID #${m.product_id}`}</strong></td>
+                <td>${typeBadge}</td>
+                <td><strong>${m.quantity}</strong></td>
+                <td style="color: var(--text-secondary);">${m.remarks || '-'}</td>
+            </tr>
+        `;
+    }).join("");
 }
 
 /**

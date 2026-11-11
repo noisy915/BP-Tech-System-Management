@@ -66,9 +66,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await api.login(username, password);
                 localStorage.setItem(CONFIG.AUTH_TOKEN_KEY, data.access_token);
                 localStorage.setItem(CONFIG.AUTH_USER_KEY, data.username);
+                localStorage.removeItem("bp_tech_offline_mode");
                 window.location.href = "admin-dashboard.html";
             } catch (err) {
-                loginAlert.textContent = err.message || "Invalid administrator credentials. Please try again.";
+                const isNetworkError = !err.message || err.message.includes("fetch") || err.message.includes("NetworkError");
+                
+                // Offline Demo Mode Fallback (Works with 0 installations!)
+                if (isNetworkError && username.toLowerCase() === "admin" && password === "admin123") {
+                    localStorage.setItem(CONFIG.AUTH_TOKEN_KEY, "demo_offline_token_2026");
+                    localStorage.setItem(CONFIG.AUTH_USER_KEY, "admin (Demo Mode)");
+                    localStorage.setItem("bp_tech_offline_mode", "true");
+                    window.location.href = "admin-dashboard.html";
+                    return;
+                }
+
+                if (isNetworkError) {
+                    loginAlert.innerHTML = `⚠️ <strong>Backend Server Offline:</strong><br>No Python/PostgreSQL server detected on port 8000.<br>You can still log in using Demo Credentials: <code>admin</code> / <code>admin123</code>`;
+                } else {
+                    loginAlert.textContent = err.message || "Invalid administrator credentials. Please try again.";
+                }
                 loginAlert.style.display = "block";
             } finally {
                 loginBtn.disabled = false;

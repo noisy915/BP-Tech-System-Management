@@ -189,9 +189,19 @@ async function loadProducts() {
         });
     } catch (err) {
         console.warn("Backend API not reachable. Rendering offline preview catalog.", err);
-        // Offline fallback filter
-        products = MOCK_PRODUCTS.filter((p) => {
+        // Offline fallback filter using stored products or defaults
+        const localList = (function() {
+            try {
+                const stored = localStorage.getItem("bp_tech_products");
+                if (stored) return JSON.parse(stored);
+            } catch (e) {}
+            return MOCK_PRODUCTS;
+        })();
+
+        products = localList.filter((p) => {
+            if (p.product_status && p.product_status !== "Active") return false;
             if (activeCondition && p.condition !== activeCondition) return false;
+            if (activeCategoryId && p.category_id != activeCategoryId) return false;
             if (currentSearchTerm) {
                 const term = currentSearchTerm.toLowerCase();
                 const match = p.product_name.toLowerCase().includes(term) || p.sku.toLowerCase().includes(term);
