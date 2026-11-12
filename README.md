@@ -73,9 +73,9 @@ Customers will also be provided with a direct WhatsApp contact link for further 
 
 **Data synchronisation:** The frontend will retrieve product information through API requests. For the initial implementation, JavaScript Fetch API can retrieve updated information whenever the catalogue loads or refreshes. WebSocket communication may be implemented as an additional feature for real-time updates without manual refreshing.
 
-## 5. Database Design – Proposed Five Entities
+## 5. Database Design – Five Inventory Entities and Admin Authentication
 
-The database will use five main entities to organise product information, suppliers, inventory records, and stock movements.
+The database uses five core inventory entities to organise product information, suppliers, inventory records, and stock movements. It also has an `Admin` entity for administrator authentication.
 
 ### Entity 1: Category
 
@@ -88,13 +88,23 @@ Stores the categories used to organise products.
 | description | TEXT | Category description |
 
 Examples:
-- Processors
-- Graphics Cards
-- Motherboards
+- GPU
+- CPU
+- Motherboard
 - RAM
-- Storage
-- Power Supplies
-- PC Accessories
+- SSD
+- HDD
+- PSU
+- Case
+- CPU Cooler
+- Monitor
+- Fan
+- Keyboard
+- Mouse
+- Headset
+- Speaker
+- Controller
+- Accessories
 
 ### Entity 2: Supplier
 
@@ -104,9 +114,9 @@ Stores information about suppliers providing products to BP Tech.
 |---|---|---|
 | supplier_id (PK) | SERIAL | Unique supplier identifier |
 | supplier_name | VARCHAR(150) | Supplier or company name |
-| contact_number | VARCHAR(20) | Supplier contact number |
-| email | VARCHAR(150) | Supplier email |
-| address | TEXT | Supplier address |
+| contact_number | VARCHAR(20), nullable | Supplier contact number |
+| email | VARCHAR(150), nullable | Supplier email |
+| address | TEXT, nullable | Supplier address |
 
 ### Entity 3: Product
 
@@ -116,8 +126,9 @@ Stores the details of individual products sold by BP Tech.
 |---|---|---|
 | product_id (PK) | SERIAL | Unique product identifier |
 | category_id (FK) | INTEGER | References Category |
-| supplier_id (FK) | INTEGER | References Supplier |
+| supplier_id (FK) | INTEGER, nullable | References Supplier; optional primary supplier |
 | product_name | VARCHAR(150) | Product name |
+| sku | VARCHAR(50), unique | Unique stock-keeping unit |
 | description | TEXT | Product specifications and details |
 | condition | VARCHAR(20) | New or Used |
 | selling_price | DECIMAL(10,2) | Product selling price |
@@ -163,6 +174,18 @@ Examples:
 
 Stock movements provide a history of inventory changes instead of simply overwriting stock quantities.
 
+### Additional Entity: Admin (Authentication)
+
+Stores administrator accounts used to access protected inventory-management operations.
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| admin_id (PK) | SERIAL | Unique administrator identifier |
+| username | VARCHAR(50), unique | Administrator login name |
+| hashed_password | VARCHAR(255) | Hashed administrator password |
+| email | VARCHAR(150), unique | Administrator email address |
+| created_at | TIMESTAMP | Account creation time |
+
 ## 6. Entity Relationships and ERD Planning
 
 The following relationships should be used when creating the Entity Relationship Diagram (ERD).
@@ -170,7 +193,7 @@ The following relationships should be used when creating the Entity Relationship
 | Relationship | Cardinality | Explanation |
 |---|---|---|
 | Category → Product | 1:M | One category can contain multiple products, but each product belongs to one category. |
-| Supplier → Product | 1:M | One supplier can supply multiple products, but each product has one primary supplier. |
+| Supplier → Product | 1:M | One supplier can supply multiple products; a product may have one primary supplier or none. |
 | Product → Inventory | 1:1 | Each product has one inventory record, and each inventory record belongs to one product. |
 | Product → Stock_Movement | 1:M | One product can have multiple stock movement records, but each movement belongs to one product. |
 
@@ -188,13 +211,13 @@ Product (1) ───── (M) Stock_Movement
 
 - Every entity must have a primary key.
 - Foreign keys must reference existing records.
-- Product names and SKU identifiers should be uniquely identifiable. Consider adding a unique `sku` attribute to Product.
+- Product SKU identifiers are unique.
 - Product prices cannot be negative.
 - Inventory quantities cannot be negative.
 - Stock movement quantities must be positive.
 - Product condition must be restricted to New or Used.
 - Inventory records should be created automatically when a new product is registered.
-- Deleting a product with existing stock movement history should be restricted or handled through a discontinued status rather than deleting historical records.
+- The current model cascades product deletion to its inventory and stock-movement records. If movement history must be retained for auditing, restrict product deletion and use the discontinued status instead.
 
 **Design consideration:** This model assumes each product has one primary supplier. If BP Tech needs to record multiple suppliers for the same product, a separate junction entity can be introduced in a future version.
 
