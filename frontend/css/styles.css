@@ -36,6 +36,11 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+}
+
 body {
     font-family: var(--font-main);
     background-color: var(--bg-primary);
@@ -150,11 +155,14 @@ textarea {
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-primary);
-    padding: 8px 18px;
+    padding: 8px 16px;
     border-radius: var(--radius-sm);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    height: 38px;
     transition: var(--transition);
 }
 
