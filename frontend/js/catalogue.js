@@ -5,63 +5,183 @@
  * Handles category filtering, condition toggling, search, dynamic card rendering, and WhatsApp link generation.
  */
 
-// Fallback demo products for instant UI preview when backend server is offline
+// Fallback demo products for instant UI preview when backend server is offline (All 11 seeded products)
 const MOCK_PRODUCTS = [
     {
         product_id: 1,
         product_name: "AMD Ryzen 5 5600",
         sku: "CPU-AMD-5600-NEW",
+        category_id: 1,
+        category: { category_id: 1, category_name: "Processors" },
+        supplier_id: 1,
+        supplier: { supplier_id: 1, supplier_name: "Ban Leong Technologies" },
         condition: "New",
-        selling_price: "529.00",
-        description: "6 Cores, 12 Threads, Up to 4.4 GHz Max Boost, Socket AM4, PCIe 4.0 with Wraith Stealth Cooler.",
+        selling_price: 529.00,
+        product_status: "Active",
+        description: "6 Cores, 12 Threads, Up to 4.4 GHz Max Boost, Socket AM4, PCIe 4.0 support with Wraith Stealth Cooler.",
         image_url: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=500&auto=format&fit=crop&q=60",
-        category: { category_name: "Processors" },
-        inventory: { quantity_available: 14, is_low_stock: false }
+        inventory: { inventory_id: 1, quantity_available: 14, reorder_level: 5, is_low_stock: false }
     },
     {
         product_id: 2,
-        product_name: "NVIDIA GeForce RTX 3060 12GB (Used)",
-        sku: "GPU-NV-3060-USED-01",
-        condition: "Used",
-        selling_price: "980.00",
-        description: "Stress-tested pass. 12GB GDDR6 VRAM, Ray Tracing, DLSS. 1-Month Store Warranty.",
-        image_url: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500&auto=format&fit=crop&q=60",
-        category: { category_name: "Graphics Cards" },
-        inventory: { quantity_available: 3, is_low_stock: true }
+        product_name: "Intel Core i5-13400F",
+        sku: "CPU-INT-13400F-NEW",
+        category_id: 1,
+        category: { category_id: 1, category_name: "Processors" },
+        supplier_id: 2,
+        supplier: { supplier_id: 2, supplier_name: "Ingram Micro Malaysia" },
+        condition: "New",
+        selling_price: 799.00,
+        product_status: "Active",
+        description: "10 Cores (6P + 4E), 16 Threads, Up to 4.6 GHz, LGA1700 socket, Discrete graphics required.",
+        image_url: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 2, quantity_available: 8, reorder_level: 4, is_low_stock: false }
     },
     {
         product_id: 3,
-        product_name: "Kingston FURY Beast 16GB (2x8GB) DDR4 3200MHz",
-        sku: "RAM-KST-16GB-3200-NEW",
-        condition: "New",
-        selling_price: "165.00",
-        description: "High-performance low-profile heat spreader, Intel XMP 2.0 ready, AMD Ryzen compatible.",
-        image_url: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=500&auto=format&fit=crop&q=60",
-        category: { category_name: "RAM" },
-        inventory: { quantity_available: 25, is_low_stock: false }
+        product_name: "NVIDIA GeForce RTX 3060 12GB (Used)",
+        sku: "GPU-NV-3060-USED-01",
+        category_id: 2,
+        category: { category_id: 2, category_name: "Graphics Cards" },
+        supplier_id: 4,
+        supplier: { supplier_id: 4, supplier_name: "BP Tech Trade-In & Direct Sourcing" },
+        condition: "Used",
+        selling_price: 980.00,
+        product_status: "Active",
+        description: "Tested 100% stress pass (FurMark & 3DMark). 12GB GDDR6 VRAM, Ray Tracing, DLSS. 1-Month Store Warranty.",
+        image_url: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 3, quantity_available: 3, reorder_level: 2, is_low_stock: false }
     },
     {
         product_id: 4,
-        product_name: "Kingston NV2 1TB PCIe 4.0 NVMe M.2 SSD",
-        sku: "SSD-KST-NV2-1TB-NEW",
+        product_name: "NVIDIA GeForce RTX 4060 8GB GDDR6",
+        sku: "GPU-NV-4060-NEW",
+        category_id: 2,
+        category: { category_id: 2, category_name: "Graphics Cards" },
+        supplier_id: 1,
+        supplier: { supplier_id: 1, supplier_name: "Ban Leong Technologies" },
         condition: "New",
-        selling_price: "289.00",
-        description: "Gen 4x4 NVMe PCIe speed up to 3500MB/s Read, 2100MB/s Write. 3-Year warranty.",
-        image_url: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500&auto=format&fit=crop&q=60",
-        category: { category_name: "Storage" },
-        inventory: { quantity_available: 18, is_low_stock: false }
+        selling_price: 1399.00,
+        product_status: "Active",
+        description: "Ada Lovelace architecture, DLSS 3 Frame Generation, 8GB GDDR6, 115W low TDP, brand new with 3-year warranty.",
+        image_url: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 4, quantity_available: 6, reorder_level: 3, is_low_stock: false }
     },
     {
         product_id: 5,
+        product_name: "MSI B550M PRO-VDH WIFI",
+        sku: "MB-MSI-B550M-NEW",
+        category_id: 3,
+        category: { category_id: 3, category_name: "Motherboards" },
+        supplier_id: 3,
+        supplier: { supplier_id: 3, supplier_name: "Tech Data Malaysia" },
+        condition: "New",
+        selling_price: 449.00,
+        product_status: "Active",
+        description: "Micro-ATX Socket AM4, PCIe 4.0, Dual M.2 slots, Built-in Wi-Fi and Bluetooth, Core Boost technology.",
+        image_url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 5, quantity_available: 10, reorder_level: 4, is_low_stock: false }
+    },
+    {
+        product_id: 6,
+        product_name: "Kingston FURY Beast 16GB (2x8GB) DDR4 3200MHz",
+        sku: "RAM-KST-16GB-3200-NEW",
+        category_id: 4,
+        category: { category_id: 4, category_name: "RAM" },
+        supplier_id: 2,
+        supplier: { supplier_id: 2, supplier_name: "Ingram Micro Malaysia" },
+        condition: "New",
+        selling_price: 165.00,
+        product_status: "Active",
+        description: "High-performance low-profile heat spreader, Intel XMP 2.0 ready, AMD Ryzen compatible, Lifetime warranty.",
+        image_url: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 6, quantity_available: 25, reorder_level: 8, is_low_stock: false }
+    },
+    {
+        product_id: 7,
+        product_name: "Corsair Vengeance LPX 16GB DDR4 3200MHz (Used)",
+        sku: "RAM-COR-16GB-USED-02",
+        category_id: 4,
+        category: { category_id: 4, category_name: "RAM" },
+        supplier_id: 4,
+        supplier: { supplier_id: 4, supplier_name: "BP Tech Trade-In & Direct Sourcing" },
+        condition: "Used",
+        selling_price: 115.00,
+        product_status: "Active",
+        description: "Trade-in memory stick, MemTest86 verified error-free. 1-Month Store Warranty.",
+        image_url: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 7, quantity_available: 2, reorder_level: 3, is_low_stock: true }
+    },
+    {
+        product_id: 8,
+        product_name: "Kingston NV2 1TB PCIe 4.0 NVMe M.2 SSD",
+        sku: "SSD-KST-NV2-1TB-NEW",
+        category_id: 5,
+        category: { category_id: 5, category_name: "Storage" },
+        supplier_id: 1,
+        supplier: { supplier_id: 1, supplier_name: "Ban Leong Technologies" },
+        condition: "New",
+        selling_price: 289.00,
+        product_status: "Active",
+        description: "Gen 4x4 NVMe PCIe performance, speeds up to 3500MB/s Read, 2100MB/s Write. 3-Year official warranty.",
+        image_url: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 8, quantity_available: 18, reorder_level: 5, is_low_stock: false }
+    },
+    {
+        product_id: 9,
+        product_name: "FSP HV PRO 650W 80 PLUS Bronze",
+        sku: "PSU-FSP-650W-NEW",
+        category_id: 6,
+        category: { category_id: 6, category_name: "Power Supplies" },
+        supplier_id: 3,
+        supplier: { supplier_id: 3, supplier_name: "Tech Data Malaysia" },
+        condition: "New",
+        selling_price: 239.00,
+        product_status: "Active",
+        description: "True 650W continuous output, 80 PLUS Bronze certified 85% efficiency, 120mm quiet fan, flat black cables.",
+        image_url: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 9, quantity_available: 12, reorder_level: 4, is_low_stock: false }
+    },
+    {
+        product_id: 10,
+        product_name: "Thermal Grizzly Kryonaut Thermal Paste (1g)",
+        sku: "ACC-TG-KRYO-1G-NEW",
+        category_id: 7,
+        category: { category_id: 7, category_name: "PC Accessories" },
+        supplier_id: 1,
+        supplier: { supplier_id: 1, supplier_name: "Ban Leong Technologies" },
+        condition: "New",
+        selling_price: 38.00,
+        product_status: "Active",
+        description: "Extremely high thermal conductivity (12.5 W/mk), ideal for CPU delidding and custom PC building.",
+        image_url: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60",
+        inventory: { inventory_id: 10, quantity_available: 30, reorder_level: 10, is_low_stock: false }
+    },
+    {
+        product_id: 11,
         product_name: "Corsair CV550 550W 80 PLUS Bronze (Used)",
         sku: "PSU-COR-CV550-USED",
+        category_id: 6,
+        category: { category_id: 6, category_name: "Power Supplies" },
+        supplier_id: 4,
+        supplier: { supplier_id: 4, supplier_name: "BP Tech Trade-In & Direct Sourcing" },
         condition: "Used",
-        selling_price: "130.00",
+        selling_price: 130.00,
+        product_status: "Active",
         description: "Clean tested power supply with voltage tester check. 1-Month Store Warranty.",
         image_url: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=500&auto=format&fit=crop&q=60",
-        category: { category_name: "Power Supplies" },
-        inventory: { quantity_available: 1, is_low_stock: true }
+        inventory: { inventory_id: 11, quantity_available: 1, reorder_level: 2, is_low_stock: true }
     }
+];
+
+const DEFAULT_CATEGORIES = [
+    { category_id: 1, category_name: "Processors" },
+    { category_id: 2, category_name: "Graphics Cards" },
+    { category_id: 3, category_name: "Motherboards" },
+    { category_id: 4, category_name: "RAM" },
+    { category_id: 5, category_name: "Storage" },
+    { category_id: 6, category_name: "Power Supplies" },
+    { category_id: 7, category_name: "PC Accessories" }
 ];
 
 let activeCategoryId = "";
@@ -71,7 +191,6 @@ let activeComponentType = "";
 
 document.addEventListener("DOMContentLoaded", () => {
     initFilters();
-    loadCategories();
     loadProducts();
 });
 
@@ -137,36 +256,39 @@ async function loadCategories() {
     const pillsContainer = document.getElementById("categoryPills");
     if (!pillsContainer) return;
 
+    let categories = [];
     try {
-        const categories = await api.getCategories();
-        pillsContainer.innerHTML = `<button class="pill ${!activeCategoryId ? 'active' : ''}" data-category-id="">All Categories</button>`;
-
-        categories.forEach((cat) => {
-            const btn = document.createElement("button");
-            btn.className = `pill ${activeCategoryId == cat.category_id ? 'active' : ''}`;
-            btn.setAttribute("data-category-id", cat.category_id);
-            btn.textContent = cat.category_name;
-            btn.addEventListener("click", () => {
-                document.querySelectorAll("#categoryPills .pill").forEach((p) => p.classList.remove("active"));
-                btn.classList.add("active");
-                activeCategoryId = cat.category_id;
-                loadProducts();
-            });
-            pillsContainer.appendChild(btn);
-        });
-
-        // Add click listener for 'All Categories'
-        const allBtn = pillsContainer.querySelector("button[data-category-id='']");
-        if (allBtn) {
-            allBtn.addEventListener("click", () => {
-                document.querySelectorAll("#categoryPills .pill").forEach((p) => p.classList.remove("active"));
-                allBtn.classList.add("active");
-                activeCategoryId = "";
-                loadProducts();
-            });
-        }
+        categories = await api.getCategories();
     } catch (err) {
         console.warn("Could not load categories from API, using default filter set.");
+        categories = DEFAULT_CATEGORIES;
+    }
+
+    pillsContainer.innerHTML = `<button class="pill ${!activeCategoryId ? 'active' : ''}" data-category-id="">All Categories</button>`;
+
+    categories.forEach((cat) => {
+        const btn = document.createElement("button");
+        btn.className = `pill ${activeCategoryId == cat.category_id ? 'active' : ''}`;
+        btn.setAttribute("data-category-id", cat.category_id);
+        btn.textContent = cat.category_name;
+        btn.addEventListener("click", () => {
+            document.querySelectorAll("#categoryPills .pill").forEach((p) => p.classList.remove("active"));
+            btn.classList.add("active");
+            activeCategoryId = cat.category_id;
+            loadProducts();
+        });
+        pillsContainer.appendChild(btn);
+    });
+
+    // Add click listener for 'All Categories'
+    const allBtn = pillsContainer.querySelector("button[data-category-id='']");
+    if (allBtn) {
+        allBtn.addEventListener("click", () => {
+            document.querySelectorAll("#categoryPills .pill").forEach((p) => p.classList.remove("active"));
+            allBtn.classList.add("active");
+            activeCategoryId = "";
+            loadProducts();
+        });
     }
 }
 
@@ -193,7 +315,13 @@ async function loadProducts() {
         const localList = (function() {
             try {
                 const stored = localStorage.getItem("bp_tech_products");
-                if (stored) return JSON.parse(stored);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                }
+            } catch (e) {}
+            try {
+                localStorage.setItem("bp_tech_products", JSON.stringify(MOCK_PRODUCTS));
             } catch (e) {}
             return MOCK_PRODUCTS;
         })();

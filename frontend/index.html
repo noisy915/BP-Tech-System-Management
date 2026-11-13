@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
+
 <body>
     <!-- Top Navigation Header -->
     <header class="header">
@@ -35,11 +37,13 @@
             <span class="hero-badge">⚡ Batu Pahat's Premier PC Hardware Store</span>
             <h2 class="hero-title">New & Used PC Components</h2>
             <p class="hero-subtitle">
-                Explore our live inventory of high-performance processors, graphics cards, motherboards, RAM, and storage. Real-time availability synchronized with our workshop.
+                Explore our live inventory of high-performance processors, graphics cards, motherboards, RAM, and
+                storage. Real-time availability synchronized with our workshop.
             </p>
             <div class="hero-actions">
                 <a href="#catalogue" class="btn-primary">Browse Catalogue</a>
-                <a href="https://wa.me/60123456789?text=Hi%20BP%20Tech,%20I%20would%20like%20to%20enquire%20about%20a%20Custom%20PC%20build" target="_blank" class="btn-whatsapp-hero" id="heroWhatsappBtn">
+                <a href="https://wa.me/60123456789?text=Hi%20BP%20Tech,%20I%20would%20like%20to%20enquire%20about%20a%20Custom%20PC%20build"
+                    target="_blank" class="btn-whatsapp-hero" id="heroWhatsappBtn">
                     <span>💬</span> WhatsApp PC Specialist
                 </a>
             </div>
@@ -50,7 +54,8 @@
     <main class="container controls-section" id="catalogue">
         <!-- Search Input -->
         <div class="search-bar-wrap">
-            <input type="text" id="searchInput" class="search-input" placeholder="Search by component name, specs, or SKU...">
+            <input type="text" id="searchInput" class="search-input"
+                placeholder="Search by component name, specs, or SKU...">
             <button id="searchBtn" class="btn-search">Search</button>
         </div>
 
@@ -77,12 +82,6 @@
             </select>
         </div>
 
-        <!-- Category Filter Pills -->
-        <div class="filter-pills" id="categoryPills">
-            <button class="pill active" data-category-id="">All Categories</button>
-            <!-- Dynamic Category Pills Rendered by JS -->
-        </div>
-
         <!-- Condition Filter (All / New / Used) -->
         <div class="condition-toggles" id="conditionToggles">
             <button class="condition-btn active" data-condition="">All Conditions</button>
@@ -96,7 +95,7 @@
             <span class="catalogue-count" id="productCount">Loading products...</span>
         </div>
 
-        <!-- Product Cards Grid -->
+        <!-- Product Cards Grid (THIS WAS MISSING!) -->
         <div class="products-grid" id="productsGrid">
             <!-- Dynamic Product Cards injected by js/catalogue.js -->
         </div>
@@ -106,17 +105,20 @@
             <div class="custom-pc-content">
                 <h3>Custom PC Building & Repair Services</h3>
                 <p>
-                    Looking to build your dream gaming rig or workstation? Consult our technicians directly on WhatsApp for spec recommendations, budget optimization, and free thermal testing.
+                    Looking to build your dream gaming rig or workstation? Consult our technicians directly on WhatsApp
+                    for spec recommendations, budget optimization, and free thermal testing.
                 </p>
             </div>
-            <a href="https://wa.me/60123456789?text=Hi%20BP%20Tech,%20I%20want%20to%20request%20a%20quote%20for%20a%20Custom%20PC%20build" target="_blank" class="btn-whatsapp-hero">
+            <a href="https://wa.me/60123456789?text=Hi%20BP%20Tech,%20I%20want%20to%20request%20a%20quote%20for%20a%20Custom%20PC%20build"
+                target="_blank" class="btn-whatsapp-hero">
                 <span>💬</span> Request PC Build Quote
             </a>
         </section>
     </main>
 
     <!-- Floating WhatsApp Action Button -->
-    <a href="https://wa.me/60123456789?text=Hi%20BP%20Tech,%20I%20am%20browsing%20your%20catalogue%20and%20have%20an%20enquiry" target="_blank" class="whatsapp-fab" id="floatingWhatsapp" title="Chat with BP Tech on WhatsApp">
+    <a href="https://wa.me/60123456789?text=Hi%20BP%20Tech,%20I%20am%20browsing%20your%20catalogue%20and%20have%20an%20enquiry"
+        target="_blank" class="whatsapp-fab" id="floatingWhatsapp" title="Chat with BP Tech on WhatsApp">
         <span>💬</span>
     </a>
 
@@ -127,7 +129,8 @@
                 <div class="footer-brand">
                     <h4>BP Tech Computer Shop</h4>
                     <p>
-                        Specialising in new and used PC hardware, trade-ins, custom gaming rigs, and repair services in Batu Pahat, Johor.
+                        Specialising in new and used PC hardware, trade-ins, custom gaming rigs, and repair services in
+                        Batu Pahat, Johor.
                     </p>
                 </div>
                 <div class="footer-links">
@@ -141,7 +144,8 @@
                 <div class="footer-links">
                     <h5>Contact BP Tech</h5>
                     <ul>
-                        <li><a href="https://wa.me/60123456789" target="_blank" id="footerWhatsappLink">WhatsApp: +601-2345-6789</a></li>
+                        <li><a href="https://wa.me/60123456789" target="_blank" id="footerWhatsappLink">WhatsApp:
+                                +601-2345-6789</a></li>
                         <li><span>Location: Batu Pahat, Johor</span></li>
                         <li><span>Mon - Sat: 10:00 AM - 8:00 PM</span></li>
                     </ul>
@@ -159,4 +163,5 @@
     <script src="js/whatsapp.js"></script>
     <script src="js/catalogue.js"></script>
 </body>
+
 </html>

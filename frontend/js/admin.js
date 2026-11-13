@@ -1,4 +1,4 @@
-﻿/**
+/**
  * BP Tech Inventory Management System
  * [MEMBER 3: JavaScript and Frontend Integration Developer]
  * Admin Dashboard Functionality & CRUD Operations
@@ -359,10 +359,22 @@ async function refreshAllData() {
         allProducts = await api.getProducts({ include_discontinued: true });
         localStorage.removeItem("bp_tech_offline_mode");
     } catch (err) {
-        console.warn("FastAPI backend offline, loading initial demo inventory data.");
-        // If not already populated, use seeds
-        if (allProducts.length === 0) {
+        console.warn("FastAPI backend offline, loading demo inventory from localStorage.");
+        const stored = localStorage.getItem("bp_tech_products");
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    allProducts = parsed;
+                } else {
+                    allProducts = JSON.parse(JSON.stringify(DEFAULT_INVENTORY_SEEDS));
+                }
+            } catch (e) {
+                allProducts = JSON.parse(JSON.stringify(DEFAULT_INVENTORY_SEEDS));
+            }
+        } else {
             allProducts = JSON.parse(JSON.stringify(DEFAULT_INVENTORY_SEEDS));
+            localStorage.setItem("bp_tech_products", JSON.stringify(allProducts));
         }
         localStorage.setItem("bp_tech_offline_mode", "true");
     }
@@ -446,6 +458,10 @@ function updateStatCounters() {
 
     // Fetch movements count
     if (auth.isOfflineMode()) {
+        const storedLogs = localStorage.getItem("bp_tech_movements");
+        if (storedLogs) {
+            try { mockMovements = JSON.parse(storedLogs); } catch (e) {}
+        }
         document.getElementById("statMovements").textContent = mockMovements.length;
     } else {
         api.getStockMovements(null, 1).then(() => {
@@ -496,6 +512,7 @@ async function handleProductSubmit(e) {
             allProducts.unshift(newProd);
             showToast("New product created with synchronized inventory (Demo Mode)!");
         }
+        localStorage.setItem("bp_tech_products", JSON.stringify(allProducts));
         document.getElementById("productModal").classList.remove("open");
         renderInventoryTable(allProducts);
         updateStatCounters();
@@ -595,6 +612,9 @@ async function handleMovementSubmit(e) {
             remarks: remarks || "Manual stock transaction"
         });
 
+        localStorage.setItem("bp_tech_products", JSON.stringify(allProducts));
+        localStorage.setItem("bp_tech_movements", JSON.stringify(mockMovements));
+
         showToast(`Stock transaction (${movementType}) recorded in Demo Mode!`);
         document.getElementById("stockMovementModal").classList.remove("open");
         renderInventoryTable(allProducts);
@@ -628,6 +648,7 @@ window.discontinueProduct = async function(productId) {
             if (prod) {
                 prod.product_status = "Discontinued";
             }
+            localStorage.setItem("bp_tech_products", JSON.stringify(allProducts));
             showToast("Product marked as Discontinued (Demo Mode).");
             renderInventoryTable(allProducts);
             return;
@@ -654,11 +675,19 @@ async function loadStockMovements() {
 
     let logs = [];
     if (auth.isOfflineMode()) {
+        const storedLogs = localStorage.getItem("bp_tech_movements");
+        if (storedLogs) {
+            try { mockMovements = JSON.parse(storedLogs); } catch (e) {}
+        }
         logs = mockMovements;
     } else {
         try {
             logs = await api.getStockMovements(null, 50);
         } catch (err) {
+            const storedLogs = localStorage.getItem("bp_tech_movements");
+            if (storedLogs) {
+                try { mockMovements = JSON.parse(storedLogs); } catch (e) {}
+            }
             logs = mockMovements;
         }
     }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,9 +19,13 @@
             grid-template-columns: 1fr 1fr;
             gap: 36px;
         }
+
         @media (max-width: 768px) {
-            .detail-card { grid-template-columns: 1fr; }
+            .detail-card {
+                grid-template-columns: 1fr;
+            }
         }
+
         .detail-img {
             width: 100%;
             height: 340px;
@@ -30,6 +35,7 @@
         }
     </style>
 </head>
+
 <body>
     <header class="header">
         <div class="container nav-container">
@@ -64,7 +70,8 @@
                 <div class="price-value" style="font-size: 2rem; margin-bottom: 20px;" id="detailPrice">RM 0.00</div>
                 <p id="detailDesc" style="color: var(--text-secondary); margin-bottom: 24px; line-height: 1.7;"></p>
                 <div id="detailStock" style="margin-bottom: 24px; font-weight: 600;"></div>
-                <a href="#" target="_blank" id="detailWhatsappBtn" class="btn-whatsapp-hero" style="width: 100%; justify-content: center;">
+                <a href="#" target="_blank" id="detailWhatsappBtn" class="btn-whatsapp-hero"
+                    style="width: 100%; justify-content: center;">
                     <span>💬</span> Enquire on WhatsApp
                 </a>
             </div>
@@ -89,11 +96,11 @@
                 product = await api.getProduct(productId);
             } catch (err) {
                 console.warn("Backend API not reachable. Checking local demo store...", err);
-                const localList = (function() {
+                const localList = (function () {
                     try {
                         const stored = localStorage.getItem("bp_tech_products");
                         if (stored) return JSON.parse(stored);
-                    } catch (e) {}
+                    } catch (e) { }
                     return null;
                 })();
 
@@ -104,46 +111,112 @@
                         sku: "CPU-AMD-5600-NEW",
                         condition: "New",
                         selling_price: "529.00",
-                        description: "6 Cores, 12 Threads, Up to 4.4 GHz Max Boost, Socket AM4, PCIe 4.0 with Wraith Stealth Cooler.",
+                        description: "6 Cores, 12 Threads, Up to 4.4 GHz Max Boost, Socket AM4, PCIe 4.0 support with Wraith Stealth Cooler.",
                         image_url: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=500&auto=format&fit=crop&q=60",
                         category: { category_name: "Processors" },
                         inventory: { quantity_available: 14, is_low_stock: false }
                     },
                     {
                         product_id: 2,
+                        product_name: "Intel Core i5-13400F",
+                        sku: "CPU-INT-13400F-NEW",
+                        condition: "New",
+                        selling_price: "799.00",
+                        description: "10 Cores (6P + 4E), 16 Threads, Up to 4.6 GHz, LGA1700 socket, Discrete graphics required.",
+                        image_url: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "Processors" },
+                        inventory: { quantity_available: 8, is_low_stock: false }
+                    },
+                    {
+                        product_id: 3,
                         product_name: "NVIDIA GeForce RTX 3060 12GB (Used)",
                         sku: "GPU-NV-3060-USED-01",
                         condition: "Used",
                         selling_price: "980.00",
-                        description: "Stress-tested pass. 12GB GDDR6 VRAM, Ray Tracing, DLSS. 1-Month Store Warranty.",
+                        description: "Tested 100% stress pass (FurMark & 3DMark). 12GB GDDR6 VRAM, Ray Tracing, DLSS. 1-Month Store Warranty.",
                         image_url: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500&auto=format&fit=crop&q=60",
                         category: { category_name: "Graphics Cards" },
-                        inventory: { quantity_available: 3, is_low_stock: true }
+                        inventory: { quantity_available: 3, is_low_stock: false }
                     },
                     {
-                        product_id: 3,
+                        product_id: 4,
+                        product_name: "NVIDIA GeForce RTX 4060 8GB GDDR6",
+                        sku: "GPU-NV-4060-NEW",
+                        condition: "New",
+                        selling_price: "1399.00",
+                        description: "Ada Lovelace architecture, DLSS 3 Frame Generation, 8GB GDDR6, 115W low TDP, brand new with 3-year warranty.",
+                        image_url: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "Graphics Cards" },
+                        inventory: { quantity_available: 6, is_low_stock: false }
+                    },
+                    {
+                        product_id: 5,
+                        product_name: "MSI B550M PRO-VDH WIFI",
+                        sku: "MB-MSI-B550M-NEW",
+                        condition: "New",
+                        selling_price: "449.00",
+                        description: "Micro-ATX Socket AM4, PCIe 4.0, Dual M.2 slots, Built-in Wi-Fi and Bluetooth, Core Boost technology.",
+                        image_url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "Motherboards" },
+                        inventory: { quantity_available: 10, is_low_stock: false }
+                    },
+                    {
+                        product_id: 6,
                         product_name: "Kingston FURY Beast 16GB (2x8GB) DDR4 3200MHz",
                         sku: "RAM-KST-16GB-3200-NEW",
                         condition: "New",
                         selling_price: "165.00",
-                        description: "High-performance low-profile heat spreader, Intel XMP 2.0 ready, AMD Ryzen compatible.",
+                        description: "High-performance low-profile heat spreader, Intel XMP 2.0 ready, AMD Ryzen compatible, Lifetime warranty.",
                         image_url: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=500&auto=format&fit=crop&q=60",
                         category: { category_name: "RAM" },
                         inventory: { quantity_available: 25, is_low_stock: false }
                     },
                     {
-                        product_id: 4,
+                        product_id: 7,
+                        product_name: "Corsair Vengeance LPX 16GB DDR4 3200MHz (Used)",
+                        sku: "RAM-COR-16GB-USED-02",
+                        condition: "Used",
+                        selling_price: "115.00",
+                        description: "Trade-in memory stick, MemTest86 verified error-free. 1-Month Store Warranty.",
+                        image_url: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "RAM" },
+                        inventory: { quantity_available: 2, is_low_stock: true }
+                    },
+                    {
+                        product_id: 8,
                         product_name: "Kingston NV2 1TB PCIe 4.0 NVMe M.2 SSD",
                         sku: "SSD-KST-NV2-1TB-NEW",
                         condition: "New",
                         selling_price: "289.00",
-                        description: "Gen 4x4 NVMe PCIe speed up to 3500MB/s Read, 2100MB/s Write. 3-Year warranty.",
+                        description: "Gen 4x4 NVMe PCIe performance, speeds up to 3500MB/s Read, 2100MB/s Write. 3-Year official warranty.",
                         image_url: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500&auto=format&fit=crop&q=60",
                         category: { category_name: "Storage" },
                         inventory: { quantity_available: 18, is_low_stock: false }
                     },
                     {
-                        product_id: 5,
+                        product_id: 9,
+                        product_name: "FSP HV PRO 650W 80 PLUS Bronze",
+                        sku: "PSU-FSP-650W-NEW",
+                        condition: "New",
+                        selling_price: "239.00",
+                        description: "True 650W continuous output, 80 PLUS Bronze certified 85% efficiency, 120mm quiet fan, flat black cables.",
+                        image_url: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "Power Supplies" },
+                        inventory: { quantity_available: 12, is_low_stock: false }
+                    },
+                    {
+                        product_id: 10,
+                        product_name: "Thermal Grizzly Kryonaut Thermal Paste (1g)",
+                        sku: "ACC-TG-KRYO-1G-NEW",
+                        condition: "New",
+                        selling_price: "38.00",
+                        description: "Extremely high thermal conductivity (12.5 W/mk), ideal for CPU delidding and custom PC building.",
+                        image_url: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60",
+                        category: { category_name: "PC Accessories" },
+                        inventory: { quantity_available: 30, is_low_stock: false }
+                    },
+                    {
+                        product_id: 11,
                         product_name: "Corsair CV550 550W 80 PLUS Bronze (Used)",
                         sku: "PSU-COR-CV550-USED",
                         condition: "Used",
@@ -195,4 +268,5 @@
         });
     </script>
 </body>
+
 </html>
