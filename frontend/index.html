@@ -22,6 +22,11 @@
             </a>
             <nav>
                 <ul class="nav-links">
+                    <li>
+                        <button type="button" class="btn-cart-nav" id="cartNavBtn" onclick="toggleCartDrawer()">
+                            🛒 Cart <span class="cart-badge" id="cartCountBadge">0</span>
+                        </button>
+                    </li>
                     <li><a href="index.html" class="nav-link active">Catalogue</a></li>
                     <li><a href="#custom-pc" class="nav-link">Custom PC Build</a></li>
                     <li><a href="#contact" class="nav-link">WhatsApp Contact</a></li>
@@ -155,11 +160,36 @@
         </div>
     </footer>
 
+    <!-- Slide-Out Shopping Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCartDrawer()"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-header">
+            <h4>🛒 Your PC Hardware Cart</h4>
+            <button type="button" class="cart-close-btn" onclick="toggleCartDrawer()">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cartItemsContainer">
+            <!-- Cart items rendered dynamically by js/cart.js -->
+        </div>
+        <div class="cart-drawer-footer">
+            <div class="cart-total-row">
+                <span>Total Estimate:</span>
+                <strong id="cartTotalPrice">RM 0.00</strong>
+            </div>
+            <div class="cart-actions">
+                <button type="button" class="btn-clear-cart" onclick="clearCart()">Clear</button>
+                <button type="button" class="btn-checkout-wa" onclick="checkoutCartWhatsApp()">
+                    <span>💬</span> Buy / Checkout via WhatsApp
+                </button>
+            </div>
+        </div>
+    </aside>
+
     <!-- Scripts: [MEMBER 3: JavaScript and Frontend Integration Developer] -->
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/whatsapp.js"></script>
     <script src="js/catalogue.js"></script>
+    <script src="js/cart.js"></script>
 </body>
 
 </html>

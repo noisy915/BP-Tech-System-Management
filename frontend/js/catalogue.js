@@ -411,12 +411,36 @@ async function loadProducts() {
 /**
  * Construct Product Card DOM element
  */
+function findProductById(productId) {
+    if (typeof window.latestApiProducts !== "undefined" && Array.isArray(window.latestApiProducts)) {
+        const foundApi = window.latestApiProducts.find((p) => p.product_id == productId);
+        if (foundApi) return foundApi;
+    }
+    let list = MOCK_PRODUCTS;
+    try {
+        const stored = localStorage.getItem("bp_tech_products");
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
+        }
+    } catch (e) {}
+    return list.find((p) => p.product_id == productId);
+}
+
+function handleAddToCart(productId, openDrawer = false) {
+    const product = findProductById(productId);
+    if (product && typeof addToCart === "function") {
+        addToCart(product, openDrawer);
+    }
+}
+
 function createProductCard(product) {
     const card = document.createElement("div");
     card.className = "product-card";
 
     const qty = product.inventory ? product.inventory.quantity_available : 0;
     const isLow = product.inventory ? product.inventory.is_low_stock : false;
+    const isOutOfStock = qty <= 0;
 
     let stockBadgeHTML = "";
     if (qty <= 0) {
@@ -452,6 +476,14 @@ function createProductCard(product) {
                     <span class="price-value"><span>RM</span>${parseFloat(product.selling_price).toFixed(2)}</span>
                 </div>
                 ${stockBadgeHTML}
+            </div>
+            <div class="card-action-buttons">
+                <button type="button" class="btn-add-cart" ${isOutOfStock ? "disabled" : ""} onclick="handleAddToCart(${product.product_id}, false)">
+                    🛒 Add to Cart
+                </button>
+                <button type="button" class="btn-buy-now" ${isOutOfStock ? "disabled" : ""} onclick="handleAddToCart(${product.product_id}, true)">
+                    ⚡ Buy Now
+                </button>
             </div>
             <a href="${waLink}" target="_blank" class="btn-whatsapp-product">
                 <span>💬</span> Enquire on WhatsApp
