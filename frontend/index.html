@@ -40,53 +40,51 @@
                 Explore our live inventory of high-performance processors, graphics cards, motherboards, RAM, and
                 storage. Real-time availability synchronized with our workshop.
             </p>
-            <div class="hero-actions">
-                <a href="#catalogue" class="btn-primary">Browse Catalogue</a>
-                <a href="https://wa.me/60123456789?text=Hi%20BP%20Tech,%20I%20would%20like%20to%20enquire%20about%20a%20Custom%20PC%20build"
-                    target="_blank" class="btn-whatsapp-hero" id="heroWhatsappBtn">
-                    <span>💬</span> WhatsApp PC Specialist
-                </a>
-            </div>
         </div>
     </section>
 
     <!-- Main Content / Controls Section -->
     <main class="container controls-section" id="catalogue">
-        <!-- Search Input -->
-        <div class="search-bar-wrap">
-            <input type="text" id="searchInput" class="search-input"
-                placeholder="Search by component name, specs, or SKU...">
-            <button id="searchBtn" class="btn-search">Search</button>
-        </div>
+        
+        <!-- Unified Single-Line Toolbar: Left (Filter + Conditions) | Right (Search) -->
+        <div class="controls-toolbar">
+            <!-- Left Side: Component Dropdown + Condition Toggles -->
+            <div class="filters-left">
+                <div class="component-dropdown-wrap">
+                    <select id="componentDropdown" class="form-select custom-dropdown">
+                        <option value="">Filter: All Components</option>
+                        <option value="CPU">CPU (Processor)</option>
+                        <option value="GPU">GPU (Graphics Card)</option>
+                        <option value="MOBO">MOBO (Motherboard)</option>
+                        <option value="RAM">RAM (Memory)</option>
+                        <option value="SSD">SSD (Solid State Drive)</option>
+                        <option value="HDD">HDD (Hard Disk Drive)</option>
+                        <option value="PSU">PSU (Power Supply)</option>
+                        <option value="PC CASE">PC Case</option>
+                        <option value="CPU COOLER">CPU Cooler</option>
+                        <option value="CASING FAN">Casing Fan</option>
+                        <option value="MONITOR">Monitor</option>
+                        <option value="KEYBOARD">Keyboard</option>
+                        <option value="MOUSE">Mouse</option>
+                        <option value="HEADSET">Headset</option>
+                        <option value="SPEAKER">Speaker</option>
+                        <option value="CONTROLLER">Controller</option>
+                    </select>
+                </div>
 
-        <!-- Component Type Dropdown -->
-        <div class="component-dropdown-wrap">
-            <select id="componentDropdown" class="form-select custom-dropdown">
-                <option value="">📂 All Components (GPU, CPU, etc.)</option>
-                <option value="CPU">CPU (Processor)</option>
-                <option value="GPU">GPU (Graphics Card)</option>
-                <option value="MOBO">MOBO (Motherboard)</option>
-                <option value="RAM">RAM (Memory)</option>
-                <option value="SSD">SSD (Solid State Drive)</option>
-                <option value="HDD">HDD (Hard Disk Drive)</option>
-                <option value="PSU">PSU (Power Supply)</option>
-                <option value="PC CASE">PC Case</option>
-                <option value="CPU COOLER">CPU Cooler</option>
-                <option value="CASING FAN">Casing Fan</option>
-                <option value="MONITOR">Monitor</option>
-                <option value="KEYBOARD">Keyboard</option>
-                <option value="MOUSE">Mouse</option>
-                <option value="HEADSET">Headset</option>
-                <option value="SPEAKER">Speaker</option>
-                <option value="CONTROLLER">Controller</option>
-            </select>
-        </div>
+                <div class="condition-toggles" id="conditionToggles">
+                    <button class="condition-btn active" data-condition="">All Conditions</button>
+                    <button class="condition-btn" data-condition="New">New Only</button>
+                    <button class="condition-btn" data-condition="Used">Used / Refurbished</button>
+                </div>
+            </div>
 
-        <!-- Condition Filter (All / New / Used) -->
-        <div class="condition-toggles" id="conditionToggles">
-            <button class="condition-btn active" data-condition="">All Conditions</button>
-            <button class="condition-btn" data-condition="New">New Only</button>
-            <button class="condition-btn" data-condition="Used">Used / Refurbished</button>
+            <!-- Right Side: Search Input & Button -->
+            <div class="search-bar-wrap">
+                <input type="text" id="searchInput" class="search-input"
+                    placeholder="Search by component name, specs, or SKU...">
+                <button id="searchBtn" class="btn-search">Search</button>
+            </div>
         </div>
 
         <!-- Catalogue Grid Header -->
