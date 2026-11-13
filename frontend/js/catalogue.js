@@ -485,9 +485,6 @@ function createProductCard(product) {
                     ⚡ Buy Now
                 </button>
             </div>
-            <a href="${waLink}" target="_blank" class="btn-whatsapp-product">
-                <span>💬</span> Enquire on WhatsApp
-            </a>
         </div>
     `;
 

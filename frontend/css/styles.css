@@ -737,7 +737,7 @@ textarea {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 0px;
 }
 
 .btn-add-cart,
