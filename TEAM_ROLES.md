@@ -84,7 +84,7 @@ database/
 
 ## 2. Team Member Responsibilities & Tasks
 
-### 👤 Member 1 — Backend & Database Developer
+### 👤 Member 1 (Razie) — Backend & Database Developer
 **Files Owned:** Entire `backend/` directory (`app/`, `sql/`, `requirements.txt`, `.env.example`).
 
 **Main Tasks:**
@@ -105,7 +105,7 @@ database/
 
 ---
 
-### 👤 Member 2 — Frontend Developer (HTML/CSS & UI/UX)
+### 👤 Member 2 (Awang) — Frontend Developer (HTML/CSS & UI/UX)
 **Files Owned:** `frontend/*.html` and `frontend/css/*`.
 
 **Main Tasks:**
@@ -126,7 +126,7 @@ database/
 
 ---
 
-### 👤 Member 3 — JavaScript & Frontend Integration Developer
+### 👤 Member 3 — JavaScript & Frontend Integration Developer (Razie and Awang)
 **Files Owned:** Entire `frontend/js/` directory (`config.js`, `api.js`, `catalogue.js`, `admin.js`, `auth.js`, `whatsapp.js`).
 
 **Main Tasks:**
